@@ -7,7 +7,7 @@
 ---
 
 ## 🚀 Prototipo Interactivo en Vivo
-👉 **[Probar la experiencia en directo aquí](https://<TU-USUARIO-GITHUB>.github.io/disneyplus-simpsons-zap-mode/)**
+👉 **[Probar la experiencia en directo aquí](https://fawlworks.github.io/disneyplus-simpsons-zap-mode/)**
 
 ---
 
