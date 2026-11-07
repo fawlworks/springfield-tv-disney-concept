@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Springfield TV: Modo Sintonía Retro | Propuesta Disney+</title>
-
-     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/b/b7/The_logo_simpsons_yellow.png">
-    
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/b/b7/The_logo_simpsons_yellow.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -228,7 +226,7 @@
                             </div>
                         </div>
 
-                        <!-- Fullscreen Toggle Button -->
+                        <!-- Fullscreen Toggle Button (Corner) -->
                         <button onclick="toggleFullscreen()" title="Ver en pantalla completa" class="absolute top-3 right-3 z-35 w-7 h-7 bg-black/60 hover:bg-black/90 text-simpson-yellow border border-yellow-500/40 rounded-lg flex items-center justify-center transition active:scale-90">
                             <i id="fullscreenIcon" class="fa-solid fa-expand text-xs"></i>
                         </button>
@@ -242,7 +240,7 @@
                                 <i class="fa-solid fa-power-off text-2xl sm:text-3xl text-slate-700"></i>
                             </div>
                             <p class="font-cartoon text-xl sm:text-2xl text-slate-500">TELEVISOR APAGADO</p>
-                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 max-w-xs">Pulsa el botón de POWER para sintonizar el canal aleatorio</p>
+                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 max-w-xs">Pulsa el botón de POWER para encender la tele</p>
                         </div>
 
                         <!-- TV ON CONTENT (DYNAMIC YOUTUBE SIMPSONS CLIPS & EMBED) -->
@@ -267,24 +265,24 @@
 
                     </div>
 
-                    <!-- TV CONTROL PANEL -->
+                    <!-- TV PHYSICAL CONTROL PANEL -->
                     <div class="w-full sm:w-1/4 flex flex-row sm:flex-col justify-between items-center gap-2 sm:gap-3 bg-purple-950/70 p-2.5 rounded-xl border border-purple-800/40">
                         
                         <!-- Power / Pause Button & LED -->
                         <div class="flex flex-col items-center gap-1">
                             <div class="flex items-center gap-1">
                                 <div id="powerLed" class="w-2.5 h-2.5 rounded-full bg-red-950 border border-red-500 transition-all duration-300"></div>
-                                <span id="powerLedLabel" class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">POWER</span>
+                                <span id="powerLedLabel" class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">POWER/PAUSA</span>
                             </div>
-                            <button id="powerBtn" onclick="handlePowerPauseClick()" title="Encender / Pausar capítulo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-600 shadow-lg flex items-center justify-center text-slate-200 active:scale-90 transition group">
+                            <button id="powerBtn" onclick="togglePowerOrPause()" title="Encender / Pausar capítulo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-600 shadow-lg flex items-center justify-center text-slate-200 active:scale-90 transition group">
                                 <i id="powerBtnIcon" class="fa-solid fa-power-off text-base sm:text-lg text-red-500 group-hover:text-red-400"></i>
                             </button>
                         </div>
 
-                        <!-- Previous Episode Dial Knob (Volver al anterior) -->
+                        <!-- Previous Episode Dial (Volver al capítulo anterior) -->
                         <div class="flex flex-col items-center gap-1">
                             <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">ANTERIOR</span>
-                            <div id="prevKnob" onclick="playPreviousEpisode()" title="Volver al capítulo anterior" class="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-slate-800 border-4 border-slate-700 shadow-md flex items-center justify-center cursor-pointer relative group knob-rotate hover:border-simpson-yellow">
+                            <div id="channelKnob" onclick="playPreviousEpisode()" title="Volver al episodio anterior" class="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-slate-800 border-4 border-slate-700 shadow-md flex items-center justify-center cursor-pointer relative group knob-rotate hover:border-simpson-yellow">
                                 <div class="w-1.5 h-4 bg-simpson-yellow rounded-full absolute top-1"></div>
                                 <div class="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center">
                                     <i class="fa-solid fa-rotate-left text-[10px] text-slate-400 group-hover:text-simpson-yellow"></i>
@@ -292,10 +290,10 @@
                             </div>
                         </div>
 
-                        <!-- Fullscreen Control Button -->
+                        <!-- Fullscreen Dedicated Panel Button -->
                         <div class="flex flex-col items-center gap-1">
                             <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">PANTALLA</span>
-                            <button onclick="toggleFullscreen()" title="Pantalla Completa" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-800 border-2 border-slate-700 shadow-md flex items-center justify-center text-slate-300 hover:border-simpson-yellow transition active:scale-90">
+                            <button onclick="toggleFullscreen()" title="Pantalla completa" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-800 border-2 border-slate-700 shadow-md flex items-center justify-center text-slate-300 hover:border-simpson-yellow transition">
                                 <i class="fa-solid fa-expand text-xs text-simpson-yellow"></i>
                             </button>
                         </div>
@@ -340,7 +338,7 @@
                 
                 <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3">
                     <div class="flex items-center gap-2">
-                        <span id="livePulse" class="w-2.5 h-2.5 rounded-full bg-retro-orange animate-pulse"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-retro-orange animate-pulse"></span>
                         <h2 class="font-cartoon text-lg sm:text-xl text-simpson-yellow tracking-wide">
                             EMITIENDO AHORA
                         </h2>
@@ -476,14 +474,6 @@
             <!-- Scrollable Content Body -->
             <div class="p-5 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-300">
                 
-                <!-- Notice Badge -->
-                <div class="bg-disney-blue/90 border border-disney-accent/40 rounded-2xl p-3.5 text-xs text-blue-100 leading-relaxed shadow-inner flex items-start gap-2.5">
-                    <i class="fa-solid fa-circle-info text-simpson-yellow text-sm mt-0.5 shrink-0"></i>
-                    <p>
-                        <strong>Nota de demostración técnica:</strong> Los 5 vídeos de demostración utilizados en este prototipo son clips meramente ilustrativos para mostrar el funcionamiento dinámico del cambio aleatorio de canal dentro del marco CRT.
-                    </p>
-                </div>
-
                 <!-- Pillar 1: Problem -->
                 <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
                     <h3 class="font-bold text-simpson-yellow text-sm sm:text-base mb-1.5 flex items-center gap-2">
@@ -512,7 +502,7 @@
                         </li>
                         <li class="flex items-start gap-2">
                             <i class="fa-solid fa-check text-green-400 mt-1"></i>
-                            <span><strong>Algoritmo Anti-Repetición & Historial:</strong> Garantiza no repetir episodios y permite volver al capítulo anterior.</span>
+                            <span><strong>Navegación de Historial:</strong> Permite volver rápidamente al capítulo anterior si cambiaste por error.</span>
                         </li>
                     </ul>
                 </div>
@@ -531,6 +521,14 @@
                         <div class="text-xl font-black text-simpson-pink font-mono">100%</div>
                         <div class="text-[11px] text-slate-400 mt-0.5">Engagement nostálgico</div>
                     </div>
+                </div>
+
+                <!-- Demostración Técnica / Nota de Vídeos de Ejemplo -->
+                <div class="bg-amber-950/40 border border-amber-500/40 p-3.5 rounded-2xl text-amber-200 text-xs flex items-start gap-2.5">
+                    <i class="fa-solid fa-triangle-exclamation text-simpson-yellow text-base shrink-0 mt-0.5"></i>
+                    <p>
+                        <strong>Nota de demostración técnica:</strong> Los 5 vídeos emitidos en este televisor retro son <em>clips de ejemplo demostrativos</em> para ilustrar la sintonización aleatoria y la mecánica de cambio de canal en este prototipo web. En la integración final nativa dentro de Disney+, la emisión se conectará directamente al catálogo oficial a máxima calidad.
+                    </p>
                 </div>
 
             </div>
@@ -677,7 +675,6 @@
            1. SIMPSONS CLIPS & EPISODES CATALOG
            ========================================================================== */
         
-        // 5 Custom requested YouTube Video IDs
         const SIMPSONS_YOUTUBE_CLIPS = [
             "-2SP4ndZEQI",
             "SWffqN9E04w",
@@ -742,7 +739,7 @@
         })();
 
         /* ==========================================================================
-           2. APP STATE & DEFAULT PRESET CONFIG (Maratón Total T1-T35)
+           2. APP STATE & HISTORY NAVIGATION LOGIC
            ========================================================================== */
         const state = {
             isPowerOn: false,
@@ -751,6 +748,7 @@
             maxSeason: 35,
             currentEpisode: null,
             history: [],
+            historyIndex: -1,
             audioCtx: null,
             streamIndex: 0
         };
@@ -816,6 +814,7 @@
            3. FULLSCREEN & ORIENTATION AUTO-ROTATE FOR MOBILE
            ========================================================================== */
         async function toggleFullscreen() {
+            playClickSound();
             const container = document.getElementById('crtScreenBox');
             const icon = document.getElementById('fullscreenIcon');
 
@@ -907,7 +906,7 @@
         }
 
         /* ==========================================================================
-           5. CORE RANDOMIZER & POWER / PAUSE / HISTORY LOGIC
+           5. YOUTUBE PAUSE VIA POSTMESSAGE & BIDIRECTIONAL NAVIGATION LOGIC
            ========================================================================== */
         
         function getFilteredEpisodes() {
@@ -918,9 +917,13 @@
             const available = getFilteredEpisodes();
             if (available.length === 0) return null;
 
+            let currentEp = (state.historyIndex >= 0 && state.historyIndex < state.historyStack.length)
+                ? state.historyStack[state.historyIndex].episode
+                : null;
+
             let filteredList = available;
-            if (available.length > 1 && state.currentEpisode) {
-                filteredList = available.filter(ep => !(ep.s === state.currentEpisode.s && ep.e === state.currentEpisode.e));
+            if (available.length > 1 && currentEp) {
+                filteredList = available.filter(ep => !(ep.s === currentEp.s && ep.e === currentEp.e));
             }
 
             const randomIndex = Math.floor(Math.random() * filteredList.length);
@@ -944,21 +947,25 @@
                 });
                 showToast("Televisor encendido");
             } else {
-                // TV is ON -> Toggle Pause/Play
+                // TV is ON -> Toggle Pause / Play via YouTube Iframe API postMessage
                 state.isPaused = !state.isPaused;
                 updatePowerUIState();
 
                 const ytPlayer = document.getElementById('youtubePlayer');
-                if (state.isPaused) {
-                    if (ytPlayer) ytPlayer.style.display = 'none';
-                    triggerOSD("|| PAUSA");
-                    showVideoStatusPill("Reproducción en Pausa");
-                    showToast("Capítulo pausado");
-                } else {
-                    if (ytPlayer) ytPlayer.style.display = 'block';
-                    triggerOSD("▶ REPRODUCIENDO");
-                    showVideoStatusPill("Emisión reanudada");
-                    showToast("Reproducción reanudada");
+                if (ytPlayer && ytPlayer.contentWindow) {
+                    if (state.isPaused) {
+                        // Pause YouTube video using enablejsapi postMessage command
+                        ytPlayer.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }), '*');
+                        triggerOSD("|| PAUSA");
+                        showVideoStatusPill("Reproducción en Pausa");
+                        showToast("Capítulo pausado");
+                    } else {
+                        // Resume YouTube video
+                        ytPlayer.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
+                        triggerOSD("▶ REPRODUCIENDO");
+                        showVideoStatusPill("Emisión reanudada");
+                        showToast("Reproducción reanudada");
+                    }
                 }
             }
         }
@@ -994,12 +1001,6 @@
             document.getElementById('antennaLeft').style.transform = `rotate(${-30 + (Math.random()*12 - 6)}deg)`;
             document.getElementById('antennaRight').style.transform = `rotate(${35 + (Math.random()*12 - 6)}deg)`;
 
-            const nextEp = getRandomNextEpisode();
-            if (!nextEp) {
-                showToast("Sin capítulos en las temporadas seleccionadas");
-                return;
-            }
-
             if (!state.isPowerOn) {
                 handlePowerPauseClick();
                 return;
@@ -1009,30 +1010,36 @@
             if (state.isPaused) {
                 state.isPaused = false;
                 updatePowerUIState();
-                document.getElementById('youtubePlayer').style.display = 'block';
             }
 
             const updateEpisodeView = () => {
-                if (state.currentEpisode) {
-                    state.history.push({
-                        episode: state.currentEpisode,
-                        clipIndex: state.streamIndex
-                    });
+                const targetEpisode = getRandomNextEpisode();
+                if (!targetEpisode) {
+                    showToast("Sin capítulos en las temporadas seleccionadas");
+                    return;
+                }
+                state.streamIndex = (state.streamIndex + 1) % SIMPSONS_YOUTUBE_CLIPS.length;
+
+                // Truncate future history stack if navigating from a previous position
+                if (state.historyIndex >= 0 && state.historyIndex < state.historyStack.length - 1) {
+                    state.historyStack = state.historyStack.slice(0, state.historyIndex + 1);
                 }
 
-                state.currentEpisode = nextEp;
+                // Push new episode into history stack
+                state.historyStack.push({
+                    episode: targetEpisode,
+                    clipIndex: state.streamIndex
+                });
+                state.historyIndex = state.historyStack.length - 1;
 
-                triggerOSD(`STV • CH ${nextEp.s < 10 ? '0'+nextEp.s : nextEp.s} • T${nextEp.s < 10 ? '0'+nextEp.s : nextEp.s}E${nextEp.e < 10 ? '0'+nextEp.e : nextEp.e}`);
+                triggerOSD(`STV • CH ${targetEpisode.s < 10 ? '0'+targetEpisode.s : targetEpisode.s} • T${targetEpisode.s < 10 ? '0'+targetEpisode.s : targetEpisode.s}E${targetEpisode.e < 10 ? '0'+targetEpisode.e : targetEpisode.e}`);
 
-                // Cycle YouTube Simpsons Video Clip
-                state.streamIndex = (state.streamIndex + 1) % SIMPSONS_YOUTUBE_CLIPS.length;
                 const clipId = SIMPSONS_YOUTUBE_CLIPS[state.streamIndex];
-                
                 const ytPlayer = document.getElementById('youtubePlayer');
-                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
+                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?enablejsapi=1&autoplay=1&mute=0&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
 
-                showVideoStatusPill(`T${nextEp.s}E${nextEp.e} En emisión`);
-                renderCurrentEpisodeMetadata(nextEp);
+                showVideoStatusPill(`T${targetEpisode.s}E${targetEpisode.e} En emisión`);
+                renderCurrentEpisodeMetadata(targetEpisode);
             };
 
             if (triggerStaticEffect) {
@@ -1050,35 +1057,37 @@
                 return;
             }
 
-            if (state.history.length === 0) {
+            if (state.historyIndex <= 0) {
                 showToast("No hay capítulos anteriores en el historial");
                 return;
             }
 
             // Rotate knob backwards
             const knob = document.getElementById('prevKnob');
-            const currentRot = parseInt(knob.getAttribute('data-rotation') || 0) - 45;
-            knob.setAttribute('data-rotation', currentRot);
-            knob.style.transform = `rotate(${currentRot}deg)`;
+            if (knob) {
+                const currentRot = parseInt(knob.getAttribute('data-rotation') || 0) - 45;
+                knob.setAttribute('data-rotation', currentRot);
+                knob.style.transform = `rotate(${currentRot}deg)`;
+            }
 
             // Unpause if paused
             if (state.isPaused) {
                 state.isPaused = false;
                 updatePowerUIState();
-                document.getElementById('youtubePlayer').style.display = 'block';
             }
 
-            const prevRecord = state.history.pop();
+            // Step backward in history stack
+            state.historyIndex--;
+            const prevRecord = state.historyStack[state.historyIndex];
             const prevEp = prevRecord.episode;
             state.streamIndex = prevRecord.clipIndex;
 
             showStatic(380, () => {
-                state.currentEpisode = prevEp;
                 triggerOSD(`⏪ RE-T${prevEp.s < 10 ? '0'+prevEp.s : prevEp.s}E${prevEp.e < 10 ? '0'+prevEp.e : prevEp.e}`);
 
                 const clipId = SIMPSONS_YOUTUBE_CLIPS[state.streamIndex];
                 const ytPlayer = document.getElementById('youtubePlayer');
-                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?autoplay=1&mute=0&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
+                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?enablejsapi=1&autoplay=1&mute=0&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
 
                 showVideoStatusPill(`Volviendo a T${prevEp.s}E${prevEp.e}`);
                 renderCurrentEpisodeMetadata(prevEp);
@@ -1086,18 +1095,9 @@
             });
         }
 
-        function renderCurrentEpisodeMetadata(ep) {
-            document.getElementById('epNumberTag').innerText = `T${ep.s < 10 ? '0'+ep.s : ep.s} E${ep.e < 10 ? '0'+ep.e : ep.e}`;
-            document.getElementById('infoTitleEs').innerText = ep.titleEs;
-            document.getElementById('infoTitleEn').innerText = ep.titleEn || "The Simpsons";
-            document.getElementById('infoSeasonPill').innerText = `Temporada ${ep.s}`;
-            document.getElementById('infoYearPill').innerText = `Año ${ep.year}`;
-            document.getElementById('infoSynopsis').innerText = ep.synopsis;
-            document.getElementById('infoQuote').innerText = `"${ep.quote || '¡Mosquis!'}"`;
-        }
-
-        function showVideoStatusPill(text) {
+        function showVideoStatusPill(text, iconClass = "fa-circle-play text-green-400") {
             const pill = document.getElementById('videoStatusPill');
+            document.getElementById('statusPillIcon').className = `fa-solid ${iconClass}`;
             document.getElementById('videoStatusText').innerText = text;
             pill.classList.remove('opacity-0');
             clearTimeout(window.statusPillTimeout);
@@ -1234,7 +1234,7 @@
             showToast(`Sintonizado a: ${label}`);
             
             if (!state.isPowerOn) {
-                handlePowerPauseClick();
+                togglePowerOrPause();
             } else {
                 playNextEpisode(true);
             }
