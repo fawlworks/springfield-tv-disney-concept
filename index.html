@@ -2,9 +2,9 @@
 <html lang="es" class="h-full bg-slate-950 overflow-x-hidden">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Springfield TV: Modo Sintonía Retro | Propuesta Disney+</title>
-     <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/b/b7/The_logo_simpsons_yellow.png">
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/b/b7/The_logo_simpsons_yellow.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -232,6 +232,12 @@
                         <!-- Glass Reflection Glare -->
                         <div id="glareLayer" class="absolute inset-0 crt-glare z-25"></div>
 
+                        <!-- Floating Exit Fullscreen Button (Shown ALWAYS in Mobile & Desktop Fullscreen) -->
+                        <button id="exitFullscreenOverlayBtn" onclick="toggleFullscreen()" title="Salir de pantalla completa" class="absolute top-3 left-3 z-50 bg-retro-orange/95 hover:bg-amber-600 text-white font-black text-xs px-3 py-2 rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.8)] border-2 border-white/60 flex items-center gap-2 transition active:scale-90 pointer-events-auto hidden">
+                            <i class="fa-solid fa-compress text-xs"></i>
+                            <span class="font-cartoon text-xs sm:text-sm tracking-wider">SALIR DE PANTALLA COMPLETA</span>
+                        </button>
+
                         <!-- On-Screen Display (OSD) Overlay -->
                         <div id="osdOverlay" class="absolute top-3 left-3 z-30 font-mono text-green-400 font-bold text-[10px] sm:text-xs bg-black/75 px-2 py-0.5 rounded border border-green-500/40 opacity-0 transition-opacity duration-300 flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-green-400 animate-ping"></span>
@@ -266,9 +272,9 @@
                         <!-- TV ON CONTENT (DYNAMIC YOUTUBE SIMPSONS CLIPS & EMBED) -->
                         <div id="tvOnScreen" class="absolute inset-0 z-0 bg-black crt-flicker flex items-center justify-center overflow-hidden">
                             
-                            <!-- Embedded YouTube Video Container -->
+                            <!-- Embedded YouTube Video Container (Clean HTML5 valid: no frameborder="0") -->
                             <iframe id="youtubePlayer" class="w-full h-full object-cover border-0 pointer-events-none transform scale-110" 
-                                    src="" 
+                                    src="about:blank" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowfullscreen>
                             </iframe>
@@ -814,6 +820,46 @@
             } catch(e) {}
         }
 
+        function showStatic(durationMs = 400, callback) {
+            playStaticSound(durationMs);
+            const canvas = document.getElementById('staticCanvas');
+            if (!canvas) {
+                if (callback) callback();
+                return;
+            }
+            const ctx = canvas.getContext('2d');
+            canvas.classList.remove('hidden');
+
+            canvas.width = canvas.clientWidth || 320;
+            canvas.height = canvas.clientHeight || 240;
+
+            let startTime = performance.now();
+            let animId;
+
+            function renderStatic(now) {
+                const elapsed = now - startTime;
+                if (elapsed >= durationMs) {
+                    cancelAnimationFrame(animId);
+                    canvas.classList.add('hidden');
+                    if (callback) callback();
+                    return;
+                }
+
+                const imgData = ctx.createImageData(canvas.width, canvas.height);
+                const buffer32 = new Uint32Array(imgData.data.buffer);
+                const len = buffer32.length;
+                for (let i = 0; i < len; i++) {
+                    const gray = (Math.random() * 255) | 0;
+                    buffer32[i] = (255 << 24) | (gray << 16) | (gray << 8) | gray;
+                }
+                ctx.putImageData(imgData, 0, 0);
+
+                animId = requestAnimationFrame(renderStatic);
+            }
+
+            animId = requestAnimationFrame(renderStatic);
+        }
+
         /* ==========================================================================
            3. FULLSCREEN & HYBRID MOBILE FULLSCREEN CONTROLS
            ========================================================================== */
@@ -873,12 +919,24 @@
             const container = document.getElementById('crtScreenBox');
             const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('pseudo-fullscreen'));
             const icon = document.getElementById('fullscreenIcon');
+            const exitOverlayBtn = document.getElementById('exitFullscreenOverlayBtn');
+            const osdOverlay = document.getElementById('osdOverlay');
             const ytPlayer = document.getElementById('youtubePlayer');
             const scanlines = document.getElementById('scanlinesLayer');
             const glare = document.getElementById('glareLayer');
             const tvOnScreen = document.getElementById('tvOnScreen');
 
             if (icon) icon.className = isFS ? "fa-solid fa-compress text-xs" : "fa-solid fa-expand text-xs";
+
+            if (exitOverlayBtn) {
+                if (isFS) {
+                    exitOverlayBtn.classList.remove('hidden');
+                    if (osdOverlay) osdOverlay.classList.add('hidden');
+                } else {
+                    exitOverlayBtn.classList.add('hidden');
+                    if (osdOverlay) osdOverlay.classList.remove('hidden');
+                }
+            }
 
             if (isFS) {
                 if (scanlines) scanlines.classList.add('hidden');
@@ -902,150 +960,48 @@
                 }
             }
         }
+
         document.addEventListener('fullscreenchange', handleFullscreenChange);
         document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-        /* ==========================================================================
-           4. CANVAS TV STATIC ANIMATION
-           ========================================================================== */
-        const canvas = document.getElementById('staticCanvas');
-        const ctx = canvas ? canvas.getContext('2d') : null;
-        let staticAnimId = null;
-
-        function resizeCanvas() {
-            if (!canvas || !canvas.parentElement) return;
-            canvas.width = Math.max(160, Math.floor(canvas.parentElement.clientWidth / 2));
-            canvas.height = Math.max(120, Math.floor(canvas.parentElement.clientHeight / 2));
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        function renderStatic() {
-            if (!ctx) return;
-            const w = canvas.width;
-            const h = canvas.height;
-            if (w === 0 || h === 0) return;
-
-            const imgData = ctx.createImageData(w, h);
-            const buffer32 = new Uint32Array(imgData.data.buffer);
-            const len = buffer32.length;
-
-            for (let i = 0; i < len; i++) {
-                const gray = Math.floor(Math.random() * 255);
-                buffer32[i] = (255 << 24) | (gray << 16) | (gray << 8) | gray;
-            }
-
-            ctx.putImageData(imgData, 0, 0);
-            staticAnimId = requestAnimationFrame(renderStatic);
-        }
-
-        function showStatic(durationMs = 400, callback) {
-            if (!canvas) {
-                if (callback) callback();
-                return;
-            }
-            canvas.classList.remove('hidden');
-            if (!staticAnimId) renderStatic();
-            playStaticSound(durationMs);
-
-            setTimeout(() => {
-                if (staticAnimId) {
-                    cancelAnimationFrame(staticAnimId);
-                    staticAnimId = null;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const container = document.getElementById('crtScreenBox');
+                if (container && container.classList.contains('pseudo-fullscreen')) {
+                    container.classList.remove('pseudo-fullscreen');
+                    handleFullscreenChange();
                 }
-                canvas.classList.add('hidden');
-                if (callback) callback();
-            }, durationMs);
-        }
+            }
+        });
 
         /* ==========================================================================
-           5. CORE TV & HISTORY NAVIGATION FUNCTIONS
+           4. POWER, PAUSE & CHANNEL PLAYBACK LOGIC
            ========================================================================== */
-        
-        function getFilteredEpisodes() {
-            return SIMPSONS_EPISODES.filter(ep => ep.s >= state.minSeason && ep.s <= state.maxSeason);
-        }
-
-        function getRandomNextEpisode() {
-            const available = getFilteredEpisodes();
-            if (available.length === 0) return null;
-
-            let currentEp = (state.historyIndex >= 0 && state.historyIndex < state.historyStack.length)
-                ? state.historyStack[state.historyIndex].episode
-                : null;
-
-            let filteredList = available;
-            if (available.length > 1 && currentEp) {
-                filteredList = available.filter(ep => !(ep.s === currentEp.s && ep.e === currentEp.e));
-            }
-
-            const randomIndex = Math.floor(Math.random() * filteredList.length);
-            return filteredList[randomIndex];
-        }
-
-        function renderCurrentEpisodeMetadata(ep) {
-            if (!ep) return;
-            state.currentEpisode = ep;
-            const sStr = ep.s < 10 ? '0' + ep.s : ep.s;
-            const eStr = ep.e < 10 ? '0' + ep.e : ep.e;
-            
-            const epNumberTag = document.getElementById('epNumberTag');
-            if (epNumberTag) epNumberTag.innerText = `T${sStr} E${eStr}`;
-
-            const infoTitleEs = document.getElementById('infoTitleEs');
-            if (infoTitleEs) infoTitleEs.innerText = ep.titleEs;
-
-            const infoTitleEn = document.getElementById('infoTitleEn');
-            if (infoTitleEn) infoTitleEn.innerText = ep.titleEn || 'The Simpsons';
-
-            const infoSeasonPill = document.getElementById('infoSeasonPill');
-            if (infoSeasonPill) infoSeasonPill.innerText = `Temporada ${ep.s}`;
-
-            const infoYearPill = document.getElementById('infoYearPill');
-            if (infoYearPill) infoYearPill.innerText = `Año ${ep.year}`;
-
-            const infoSynopsis = document.getElementById('infoSynopsis');
-            if (infoSynopsis) infoSynopsis.innerText = ep.synopsis;
-
-            const infoQuote = document.getElementById('infoQuote');
-            if (infoQuote) infoQuote.innerText = `"${ep.quote}"`;
-        }
-
-        function loadEpisodeContent(record) {
-            const ep = record.episode;
-            const clipId = SIMPSONS_YOUTUBE_CLIPS[record.clipIndex];
-            const ytPlayer = document.getElementById('youtubePlayer');
-            const container = document.getElementById('crtScreenBox');
-            const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('pseudo-fullscreen'));
-            const controlsParam = isFS ? 1 : 0;
-            
-            ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?enablejsapi=1&autoplay=1&mute=0&controls=${controlsParam}&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
-
-            const sStr = ep.s < 10 ? '0' + ep.s : ep.s;
-            const eStr = ep.e < 10 ? '0' + ep.e : ep.e;
-            triggerOSD(`STV • CH ${sStr} • T${sStr}E${eStr}`);
-            showVideoStatusPill(`T${ep.s}E${ep.e} En emisión`);
-            renderCurrentEpisodeMetadata(ep);
-        }
-
         function togglePowerOrPause() {
             playClickSound();
 
             if (!state.isPowerOn) {
-                // Turn TV ON
                 state.isPowerOn = true;
                 state.isPaused = false;
                 updatePowerUIState();
 
-                document.getElementById('tvOffScreen').classList.add('hidden');
+                const tvOff = document.getElementById('tvOffScreen');
+                if (tvOff) tvOff.classList.add('hidden');
+
                 showStatic(500, () => {
-                    document.getElementById('tvOnScreen').classList.remove('hidden');
-                    document.getElementById('channelWatermark').classList.remove('hidden');
-                    playNextEpisode(false);
+                    const tvOn = document.getElementById('tvOnScreen');
+                    if (tvOn) tvOn.classList.remove('hidden');
+                    const watermark = document.getElementById('channelWatermark');
+                    if (watermark) watermark.classList.remove('hidden');
+
+                    if (state.historyStack.length === 0) {
+                        playNextEpisode(false);
+                    } else {
+                        const currentRecord = state.historyStack[state.historyIndex];
+                        loadEpisodeContent(currentRecord);
+                    }
                 });
                 showToast("Televisor encendido");
             } else {
-                // TV is already ON -> Toggle Pause / Play via YouTube postMessage API
                 state.isPaused = !state.isPaused;
                 updatePowerUIState();
 
@@ -1054,12 +1010,12 @@
                     if (state.isPaused) {
                         ytPlayer.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: '' }), '*');
                         triggerOSD("|| PAUSA");
-                        showVideoStatusPill("Reproducción en Pausa");
+                        showVideoStatusPill("Reproducción en Pausa", "fa-circle-pause text-amber-400");
                         showToast("Capítulo pausado");
                     } else {
                         ytPlayer.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: '' }), '*');
                         triggerOSD("▶ REPRODUCIENDO");
-                        showVideoStatusPill("Emisión reanudada");
+                        showVideoStatusPill("Emisión reanudada", "fa-circle-play text-green-400");
                         showToast("Reproducción reanudada");
                     }
                 }
@@ -1090,12 +1046,65 @@
             }
         }
 
+        function getRandomNextEpisode() {
+            const available = SIMPSONS_EPISODES.filter(ep => ep.s >= state.minSeason && ep.s <= state.maxSeason);
+            if (available.length === 0) return null;
+            const randomIndex = Math.floor(Math.random() * available.length);
+            return available[randomIndex];
+        }
+
+        function loadEpisodeContent(record) {
+            if (!record || !record.episode) return;
+            state.currentEpisode = record.episode;
+            
+            const ep = record.episode;
+            const clipId = SIMPSONS_YOUTUBE_CLIPS[record.clipIndex % SIMPSONS_YOUTUBE_CLIPS.length];
+            
+            const container = document.getElementById('crtScreenBox');
+            const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement || (container && container.classList.contains('pseudo-fullscreen')));
+            
+            const ytPlayer = document.getElementById('youtubePlayer');
+            if (ytPlayer) {
+                ytPlayer.src = `https://www.youtube.com/embed/${clipId}?enablejsapi=1&autoplay=1&rel=0&modestbranding=1&controls=${isFS ? 1 : 0}`;
+            }
+
+            renderCurrentEpisodeMetadata(ep);
+            triggerOSD(`CH ${ep.s < 10 ? '0' + ep.s : ep.s} • T${ep.s < 10 ? '0' + ep.s : ep.s}E${ep.e < 10 ? '0' + ep.e : ep.e}`);
+            showVideoStatusPill("Emisión activa");
+        }
+
+        function renderCurrentEpisodeMetadata(ep) {
+            if (!ep) return;
+            const epTag = `T${ep.s < 10 ? '0' + ep.s : ep.s} E${ep.e < 10 ? '0' + ep.e : ep.e}`;
+            const tagEl = document.getElementById('epNumberTag');
+            if (tagEl) tagEl.innerText = epTag;
+
+            const titleEs = document.getElementById('infoTitleEs');
+            if (titleEs) titleEs.innerText = ep.titleEs;
+
+            const titleEn = document.getElementById('infoTitleEn');
+            if (titleEn) titleEn.innerText = ep.titleEn || "The Simpsons";
+
+            const sPill = document.getElementById('infoSeasonPill');
+            if (sPill) sPill.innerText = `Temporada ${ep.s}`;
+
+            const yPill = document.getElementById('infoYearPill');
+            if (yPill) yPill.innerText = `Año ${ep.year}`;
+
+            const syn = document.getElementById('infoSynopsis');
+            if (syn) syn.innerText = ep.synopsis;
+
+            const quote = document.getElementById('infoQuote');
+            if (quote) quote.innerText = `"${ep.quote}"`;
+        }
+
         function playNextEpisode(triggerStaticEffect = true) {
             playClickSound();
             
-            // Antenna motion
-            document.getElementById('antennaLeft').style.transform = `rotate(${-30 + (Math.random()*12 - 6)}deg)`;
-            document.getElementById('antennaRight').style.transform = `rotate(${35 + (Math.random()*12 - 6)}deg)`;
+            const antL = document.getElementById('antennaLeft');
+            const antR = document.getElementById('antennaRight');
+            if (antL) antL.style.transform = `rotate(${-30 + (Math.random()*12 - 6)}deg)`;
+            if (antR) antR.style.transform = `rotate(${35 + (Math.random()*12 - 6)}deg)`;
 
             if (!state.isPowerOn) {
                 togglePowerOrPause();
@@ -1108,7 +1117,6 @@
             }
 
             const updateNext = () => {
-                // Check if we are currently stepping forward in already visited history
                 if (state.historyIndex < state.historyStack.length - 1) {
                     state.historyIndex++;
                     const record = state.historyStack[state.historyIndex];
@@ -1116,7 +1124,6 @@
                     loadEpisodeContent(record);
                     showToast(`Avanzado a T${record.episode.s}E${record.episode.e}`);
                 } else {
-                    // Generate brand new episode and append to history stack
                     const targetEpisode = getRandomNextEpisode();
                     if (!targetEpisode) {
                         showToast("Sin capítulos en las temporadas seleccionadas");
@@ -1155,7 +1162,6 @@
                 return;
             }
 
-            // Animate physical dial knob rotation
             const knob = document.getElementById('channelKnob');
             if (knob) {
                 state.knobRotation -= 45;
@@ -1167,7 +1173,6 @@
                 updatePowerUIState();
             }
 
-            // Step backward in history stack
             state.historyIndex--;
             const prevRecord = state.historyStack[state.historyIndex];
             state.streamIndex = prevRecord.clipIndex;
@@ -1180,8 +1185,12 @@
 
         function showVideoStatusPill(text, iconClass = "fa-circle-play text-green-400") {
             const pill = document.getElementById('videoStatusPill');
-            document.getElementById('statusPillIcon').className = `fa-solid ${iconClass}`;
-            document.getElementById('videoStatusText').innerText = text;
+            if (!pill) return;
+            const icon = document.getElementById('statusPillIcon');
+            if (icon) icon.className = `fa-solid ${iconClass}`;
+            const txt = document.getElementById('videoStatusText');
+            if (txt) txt.innerText = text;
+            
             pill.classList.remove('opacity-0');
             clearTimeout(window.statusPillTimeout);
             window.statusPillTimeout = setTimeout(() => {
@@ -1191,9 +1200,11 @@
 
         function triggerOSD(text) {
             const osd = document.getElementById('osdOverlay');
-            document.getElementById('osdText').innerText = text;
-            osd.classList.remove('opacity-0');
+            if (!osd) return;
+            const txt = document.getElementById('osdText');
+            if (txt) txt.innerText = text;
             
+            osd.classList.remove('opacity-0');
             clearTimeout(window.osdTimeout);
             window.osdTimeout = setTimeout(() => {
                 osd.classList.add('opacity-0');
@@ -1201,12 +1212,13 @@
         }
 
         /* ==========================================================================
-           6. MODAL MANAGERS & PRESETS
+           5. MODAL MANAGERS & PRESETS
            ========================================================================== */
         
         function openPitchModal() {
             playClickSound();
             const modal = document.getElementById('pitchModal');
+            if (!modal) return;
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -1216,6 +1228,7 @@
         function closePitchModal() {
             playClickSound();
             const modal = document.getElementById('pitchModal');
+            if (!modal) return;
             modal.classList.add('opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -1229,19 +1242,27 @@
             updateFilterRangeLabels();
             
             const modal = document.getElementById('filterModal');
+            if (!modal) return;
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                document.getElementById('filterModalCard').classList.remove('scale-95');
-                document.getElementById('filterModalCard').classList.add('scale-100');
+                const card = document.getElementById('filterModalCard');
+                if (card) {
+                    card.classList.remove('scale-95');
+                    card.classList.add('scale-100');
+                }
             }, 10);
         }
 
         function closeFilterModal() {
             playClickSound();
             const modal = document.getElementById('filterModal');
-            document.getElementById('filterModalCard').classList.remove('scale-100');
-            document.getElementById('filterModalCard').classList.add('scale-95');
+            if (!modal) return;
+            const card = document.getElementById('filterModalCard');
+            if (card) {
+                card.classList.remove('scale-100');
+                card.classList.add('scale-95');
+            }
             modal.classList.add('opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -1259,19 +1280,27 @@
             document.getElementById('disneyModalSynopsis').innerText = ep.synopsis;
 
             const modal = document.getElementById('disneyInfoModal');
+            if (!modal) return;
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
-                document.getElementById('disneyInfoModalCard').classList.remove('scale-95');
-                document.getElementById('disneyInfoModalCard').classList.add('scale-100');
+                const card = document.getElementById('disneyInfoModalCard');
+                if (card) {
+                    card.classList.remove('scale-95');
+                    card.classList.add('scale-100');
+                }
             }, 10);
         }
 
         function closeDisneyInfoModal() {
             playClickSound();
             const modal = document.getElementById('disneyInfoModal');
-            document.getElementById('disneyInfoModalCard').classList.remove('scale-100');
-            document.getElementById('disneyInfoModalCard').classList.add('scale-95');
+            if (!modal) return;
+            const card = document.getElementById('disneyInfoModalCard');
+            if (card) {
+                card.classList.remove('scale-100');
+                card.classList.add('scale-95');
+            }
             modal.classList.add('opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
@@ -1325,6 +1354,7 @@
 
         function showToast(msg) {
             const toast = document.getElementById('toast');
+            if (!toast) return;
             document.getElementById('toastMsg').innerText = msg;
             toast.classList.remove('translate-y-20', 'opacity-0');
             
