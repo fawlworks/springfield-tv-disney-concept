@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Springfield TV: Modo Sintonía Retro | Propuesta Disney+</title>
-    
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/commons/b/b7/The_logo_simpsons_yellow.png">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -226,7 +226,7 @@
                             </div>
                         </div>
 
-                        <!-- Fullscreen Toggle Button (Mobile Landscape friendly) -->
+                        <!-- Fullscreen Toggle Button (Corner) -->
                         <button onclick="toggleFullscreen()" title="Ver en pantalla completa" class="absolute top-3 right-3 z-35 w-7 h-7 bg-black/60 hover:bg-black/90 text-simpson-yellow border border-yellow-500/40 rounded-lg flex items-center justify-center transition active:scale-90">
                             <i id="fullscreenIcon" class="fa-solid fa-expand text-xs"></i>
                         </button>
@@ -240,7 +240,7 @@
                                 <i class="fa-solid fa-power-off text-2xl sm:text-3xl text-slate-700"></i>
                             </div>
                             <p class="font-cartoon text-xl sm:text-2xl text-slate-500">TELEVISOR APAGADO</p>
-                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 max-w-xs">Pulsa el botón rojo de POWER para encender el canal aleatorio</p>
+                            <p class="text-[11px] sm:text-xs text-slate-600 mt-1 max-w-xs">Pulsa el botón de POWER para encender la tele</p>
                         </div>
 
                         <!-- TV ON CONTENT (DYNAMIC YOUTUBE SIMPSONS CLIPS & EMBED) -->
@@ -253,15 +253,10 @@
                                     allowfullscreen>
                             </iframe>
 
-                            <!-- Fallback Video Element -->
-                            <video id="nativeVideoPlayer" class="w-full h-full object-cover hidden" loop playsinline muted>
-                                <source id="videoSource" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-                            </video>
-
                             <!-- Video Loading / Stream Active Overlay -->
                             <div id="videoStatusOverlay" class="absolute inset-x-0 bottom-3 z-30 flex justify-center pointer-events-none">
                                 <div id="videoStatusPill" class="bg-black/80 text-simpson-yellow border border-yellow-500/30 text-[10px] font-mono px-2.5 py-0.5 rounded-full backdrop-blur flex items-center gap-1.5 opacity-0 transition-opacity">
-                                    <i class="fa-solid fa-circle-play text-green-400"></i>
+                                    <i id="statusPillIcon" class="fa-solid fa-circle-play text-green-400"></i>
                                     <span id="videoStatusText">Emisión activa</span>
                                 </div>
                             </div>
@@ -270,36 +265,36 @@
 
                     </div>
 
-                    <!-- TV CONTROL PANEL -->
+                    <!-- TV PHYSICAL CONTROL PANEL -->
                     <div class="w-full sm:w-1/4 flex flex-row sm:flex-col justify-between items-center gap-2 sm:gap-3 bg-purple-950/70 p-2.5 rounded-xl border border-purple-800/40">
                         
-                        <!-- Power Button & LED -->
+                        <!-- Power / Pause Button & LED -->
                         <div class="flex flex-col items-center gap-1">
                             <div class="flex items-center gap-1">
                                 <div id="powerLed" class="w-2.5 h-2.5 rounded-full bg-red-950 border border-red-500 transition-all duration-300"></div>
-                                <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">POWER</span>
+                                <span id="powerLedLabel" class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">POWER/PAUSA</span>
                             </div>
-                            <button id="powerBtn" onclick="togglePower()" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-600 shadow-lg flex items-center justify-center text-slate-200 active:scale-90 transition group">
-                                <i class="fa-solid fa-power-off text-base sm:text-lg text-red-500 group-hover:text-red-400"></i>
+                            <button id="powerBtn" onclick="togglePowerOrPause()" title="Encender / Pausar capítulo" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border-2 border-slate-600 shadow-lg flex items-center justify-center text-slate-200 active:scale-90 transition group">
+                                <i id="powerBtnIcon" class="fa-solid fa-power-off text-base sm:text-lg text-red-500 group-hover:text-red-400"></i>
                             </button>
                         </div>
 
-                        <!-- Channel Dial Knob -->
+                        <!-- Previous Episode Dial (Volver al capítulo anterior) -->
                         <div class="flex flex-col items-center gap-1">
-                            <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">CANAL</span>
-                            <div id="channelKnob" onclick="playNextEpisode()" class="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-slate-800 border-4 border-slate-700 shadow-md flex items-center justify-center cursor-pointer relative group knob-rotate hover:border-simpson-yellow">
+                            <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">ANTERIOR</span>
+                            <div id="channelKnob" onclick="playPreviousEpisode()" title="Volver al episodio anterior" class="w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-slate-800 border-4 border-slate-700 shadow-md flex items-center justify-center cursor-pointer relative group knob-rotate hover:border-simpson-yellow">
                                 <div class="w-1.5 h-4 bg-simpson-yellow rounded-full absolute top-1"></div>
                                 <div class="w-5 h-5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center">
-                                    <i class="fa-solid fa-rotate-right text-[10px] text-slate-400 group-hover:text-simpson-yellow"></i>
+                                    <i class="fa-solid fa-rotate-left text-[10px] text-slate-400 group-hover:text-simpson-yellow"></i>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Sound Control -->
+                        <!-- Fullscreen Dedicated Panel Button -->
                         <div class="flex flex-col items-center gap-1">
-                            <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">SONIDO</span>
-                            <button onclick="toggleAudioMute()" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-800 border-2 border-slate-700 shadow-md flex items-center justify-center text-slate-300 hover:border-simpson-yellow transition">
-                                <i id="volumeIcon" class="fa-solid fa-volume-xmark text-xs text-red-400"></i>
+                            <span class="text-[8px] font-mono tracking-widest text-purple-300 uppercase">PANTALLA</span>
+                            <button onclick="toggleFullscreen()" title="Pantalla completa" class="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-slate-800 border-2 border-slate-700 shadow-md flex items-center justify-center text-slate-300 hover:border-simpson-yellow transition">
+                                <i class="fa-solid fa-expand text-xs text-simpson-yellow"></i>
                             </button>
                         </div>
 
@@ -507,7 +502,7 @@
                         </li>
                         <li class="flex items-start gap-2">
                             <i class="fa-solid fa-check text-green-400 mt-1"></i>
-                            <span><strong>Algoritmo Anti-Repetición:</strong> Garantiza no repetir episodios vistos recientemente durante la sesión.</span>
+                            <span><strong>Navegación de Historial:</strong> Permite volver rápidamente al capítulo anterior si cambiaste por error.</span>
                         </li>
                     </ul>
                 </div>
@@ -680,7 +675,6 @@
            1. SIMPSONS CLIPS & EPISODES CATALOG
            ========================================================================== */
         
-        // Dynamic YouTube Video Clips from YouTube channel @lossimpsonlatino3849 & Simpsons video clips
         const SIMPSONS_YOUTUBE_CLIPS = [
             "-2SP4ndZEQI",
             "SWffqN9E04w",
@@ -745,15 +739,16 @@
         })();
 
         /* ==========================================================================
-           2. APP STATE & DEFAULT PRESET CONFIG (Maratón Total T1-T35)
+           2. APP STATE & HISTORY NAVIGATION LOGIC
            ========================================================================== */
         const state = {
             isPowerOn: false,
+            isPaused: false,
             minSeason: 1, // Default: Maratón Total
             maxSeason: 35,
             currentEpisode: null,
             history: [],
-            soundMuted: true,
+            historyIndex: -1,
             audioCtx: null,
             streamIndex: 0
         };
@@ -766,7 +761,6 @@
         }
 
         function playStaticSound(durationMs = 400) {
-            if (state.soundMuted) return;
             try {
                 initAudioContext();
                 if (!state.audioCtx) return;
@@ -794,7 +788,6 @@
         }
 
         function playClickSound() {
-            if (state.soundMuted) return;
             try {
                 initAudioContext();
                 if (!state.audioCtx) return;
@@ -821,6 +814,7 @@
            3. FULLSCREEN & ORIENTATION AUTO-ROTATE FOR MOBILE
            ========================================================================== */
         async function toggleFullscreen() {
+            playClickSound();
             const container = document.getElementById('crtScreenBox');
             const icon = document.getElementById('fullscreenIcon');
 
@@ -912,7 +906,7 @@
         }
 
         /* ==========================================================================
-           5. CORE RANDOMIZER & YOUTUBE PLAYER LOGIC
+           5. CORE RANDOMIZER & VIDEO PLAYER LOGIC
            ========================================================================== */
         
         function getFilteredEpisodes() {
@@ -932,40 +926,90 @@
             return filteredList[randomIndex];
         }
 
-        function togglePower() {
+        // TOGGLE POWER / PAUSE
+        function togglePowerOrPause() {
             playClickSound();
-            state.isPowerOn = !state.isPowerOn;
-
             const powerLed = document.getElementById('powerLed');
+            const powerBtnIcon = document.getElementById('powerBtnIcon');
             const tvOffScreen = document.getElementById('tvOffScreen');
             const tvOnScreen = document.getElementById('tvOnScreen');
             const ytPlayer = document.getElementById('youtubePlayer');
             const watermark = document.getElementById('channelWatermark');
 
-            if (state.isPowerOn) {
+            if (!state.isPowerOn) {
+                // Turn TV ON
+                state.isPowerOn = true;
+                state.isPaused = false;
                 powerLed.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 border border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.9)] transition-all duration-300";
+                powerBtnIcon.className = "fa-solid fa-pause text-base sm:text-lg text-emerald-400 group-hover:text-emerald-300";
                 tvOffScreen.classList.add('hidden');
                 
                 showStatic(500, () => {
                     tvOnScreen.classList.remove('hidden');
                     watermark.classList.remove('hidden');
-                    if (!state.currentEpisode) {
+                    if (state.historyIndex === -1 || !state.currentEpisode) {
                         playNextEpisode(false);
                     } else {
-                        triggerOSD(`STV • T${state.currentEpisode.s < 10 ? '0'+state.currentEpisode.s : state.currentEpisode.s}E${state.currentEpisode.e < 10 ? '0'+state.currentEpisode.e : state.currentEpisode.e}`);
+                        const ep = state.history[state.historyIndex];
+                        loadEpisodeIntoTV(ep);
                     }
                 });
                 showToast("Televisor encendido");
             } else {
-                powerLed.className = "w-2.5 h-2.5 rounded-full bg-red-950 border border-red-500 transition-all duration-300";
-                tvOnScreen.classList.add('hidden');
-                watermark.classList.add('hidden');
-                tvOffScreen.classList.remove('hidden');
-                ytPlayer.src = "";
-                showToast("Televisor apagado");
+                // TV is ALREADY ON -> Pause or Resume toggle
+                state.isPaused = !state.isPaused;
+
+                if (state.isPaused) {
+                    if (ytPlayer && ytPlayer.contentWindow) {
+                        ytPlayer.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    }
+                    powerLed.className = "w-2.5 h-2.5 rounded-full bg-amber-500 border border-amber-300 shadow-[0_0_10px_rgba(245,158,11,0.9)] transition-all duration-300";
+                    powerBtnIcon.className = "fa-solid fa-play text-base sm:text-lg text-amber-400 group-hover:text-amber-300";
+                    showVideoStatusPill("⏸️ Pausado", "fa-circle-pause text-amber-400");
+                    showToast("Emisión en pausa");
+                } else {
+                    if (ytPlayer && ytPlayer.contentWindow) {
+                        ytPlayer.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                    }
+                    powerLed.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 border border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.9)] transition-all duration-300";
+                    powerBtnIcon.className = "fa-solid fa-pause text-base sm:text-lg text-emerald-400 group-hover:text-emerald-300";
+                    showVideoStatusPill("▶️ Reproduciendo", "fa-circle-play text-green-400");
+                    showToast("Reanudando emisión");
+                }
             }
         }
 
+        // LOAD EPISODE INTO PLAYER
+        function loadEpisodeIntoTV(ep) {
+            state.currentEpisode = ep;
+            state.isPaused = false;
+
+            const powerLed = document.getElementById('powerLed');
+            const powerBtnIcon = document.getElementById('powerBtnIcon');
+            if (powerLed) powerLed.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 border border-emerald-300 shadow-[0_0_10px_rgba(16,185,129,0.9)] transition-all duration-300";
+            if (powerBtnIcon) powerBtnIcon.className = "fa-solid fa-pause text-base sm:text-lg text-emerald-400 group-hover:text-emerald-300";
+
+            triggerOSD(`STV • CH ${ep.s < 10 ? '0'+ep.s : ep.s} • T${ep.s < 10 ? '0'+ep.s : ep.s}E${ep.e < 10 ? '0'+ep.e : ep.e}`);
+
+            state.streamIndex = (state.streamIndex + 1) % SIMPSONS_YOUTUBE_CLIPS.length;
+            const clipId = SIMPSONS_YOUTUBE_CLIPS[state.streamIndex];
+            
+            const ytPlayer = document.getElementById('youtubePlayer');
+            ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?enablejsapi=1&autoplay=1&mute=0&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
+
+            showVideoStatusPill(`T${ep.s}E${ep.e} En emisión`, "fa-circle-play text-green-400");
+
+            // Update Info Panel
+            document.getElementById('epNumberTag').innerText = `T${ep.s < 10 ? '0'+ep.s : ep.s} E${ep.e < 10 ? '0'+ep.e : ep.e}`;
+            document.getElementById('infoTitleEs').innerText = ep.titleEs;
+            document.getElementById('infoTitleEn').innerText = ep.titleEn || "The Simpsons";
+            document.getElementById('infoSeasonPill').innerText = `Temporada ${ep.s}`;
+            document.getElementById('infoYearPill').innerText = `Año ${ep.year}`;
+            document.getElementById('infoSynopsis').innerText = ep.synopsis;
+            document.getElementById('infoQuote').innerText = `"${ep.quote || '¡Mosquis!'}"`;
+        }
+
+        // NEXT EPISODE BUTTON
         function playNextEpisode(triggerStaticEffect = true) {
             playClickSound();
             
@@ -979,52 +1023,66 @@
             document.getElementById('antennaLeft').style.transform = `rotate(${-30 + (Math.random()*12 - 6)}deg)`;
             document.getElementById('antennaRight').style.transform = `rotate(${35 + (Math.random()*12 - 6)}deg)`;
 
-            const nextEp = getRandomNextEpisode();
-            if (!nextEp) {
-                showToast("Sin capítulos en las temporadas seleccionadas");
-                return;
+            let nextEp;
+            if (state.historyIndex < state.history.length - 1) {
+                // Navigate forward in existing history
+                state.historyIndex++;
+                nextEp = state.history[state.historyIndex];
+            } else {
+                // Fetch brand new random episode
+                nextEp = getRandomNextEpisode();
+                if (!nextEp) {
+                    showToast("Sin capítulos en las temporadas seleccionadas");
+                    return;
+                }
+                state.history.push(nextEp);
+                state.historyIndex = state.history.length - 1;
             }
 
             if (!state.isPowerOn) {
-                togglePower();
+                togglePowerOrPause();
                 return;
             }
 
-            const updateEpisodeView = () => {
-                state.currentEpisode = nextEp;
-                state.history.push(nextEp);
-
-                triggerOSD(`STV • CH ${nextEp.s < 10 ? '0'+nextEp.s : nextEp.s} • T${nextEp.s < 10 ? '0'+nextEp.s : nextEp.s}E${nextEp.e < 10 ? '0'+nextEp.e : nextEp.e}`);
-
-                // Cycle YouTube Simpsons Video Clip
-                state.streamIndex = (state.streamIndex + 1) % SIMPSONS_YOUTUBE_CLIPS.length;
-                const clipId = SIMPSONS_YOUTUBE_CLIPS[state.streamIndex];
-                
-                const ytPlayer = document.getElementById('youtubePlayer');
-                const muteParam = state.soundMuted ? 1 : 0;
-                ytPlayer.src = `https://www.youtube-nocookie.com/embed/${clipId}?autoplay=1&mute=${muteParam}&controls=0&loop=1&playlist=${clipId}&playsinline=1&modestbranding=1&rel=0`;
-
-                showVideoStatusPill(`T${nextEp.s}E${nextEp.e} En emisión`);
-
-                // Update Info Panel
-                document.getElementById('epNumberTag').innerText = `T${nextEp.s < 10 ? '0'+nextEp.s : nextEp.s} E${nextEp.e < 10 ? '0'+nextEp.e : nextEp.e}`;
-                document.getElementById('infoTitleEs').innerText = nextEp.titleEs;
-                document.getElementById('infoTitleEn').innerText = nextEp.titleEn || "The Simpsons";
-                document.getElementById('infoSeasonPill').innerText = `Temporada ${nextEp.s}`;
-                document.getElementById('infoYearPill').innerText = `Año ${nextEp.year}`;
-                document.getElementById('infoSynopsis').innerText = nextEp.synopsis;
-                document.getElementById('infoQuote').innerText = `"${nextEp.quote || '¡Mosquis!'}"`;
-            };
-
             if (triggerStaticEffect) {
-                showStatic(380, updateEpisodeView);
+                showStatic(380, () => loadEpisodeIntoTV(nextEp));
             } else {
-                updateEpisodeView();
+                loadEpisodeIntoTV(nextEp);
             }
         }
 
-        function showVideoStatusPill(text) {
+        // PREVIOUS EPISODE BUTTON (Volver al capítulo anterior)
+        function playPreviousEpisode() {
+            playClickSound();
+            if (!state.isPowerOn) {
+                showToast("Encendiendo la televisión...");
+                togglePowerOrPause();
+                return;
+            }
+
+            if (state.historyIndex <= 0) {
+                showToast("No hay capítulos anteriores en tu historial");
+                return;
+            }
+
+            state.historyIndex--;
+            const prevEp = state.history[state.historyIndex];
+
+            // Rotate knob backward
+            const knob = document.getElementById('channelKnob');
+            const currentRot = parseInt(knob.getAttribute('data-rotation') || 0) - 45;
+            knob.setAttribute('data-rotation', currentRot);
+            knob.style.transform = `rotate(${currentRot}deg)`;
+
+            showStatic(380, () => {
+                loadEpisodeIntoTV(prevEp);
+                showToast("Regresando a episodio anterior");
+            });
+        }
+
+        function showVideoStatusPill(text, iconClass = "fa-circle-play text-green-400") {
             const pill = document.getElementById('videoStatusPill');
+            document.getElementById('statusPillIcon').className = `fa-solid ${iconClass}`;
             document.getElementById('videoStatusText').innerText = text;
             pill.classList.remove('opacity-0');
             clearTimeout(window.statusPillTimeout);
@@ -1161,34 +1219,9 @@
             showToast(`Sintonizado a: ${label}`);
             
             if (!state.isPowerOn) {
-                togglePower();
+                togglePowerOrPause();
             } else {
                 playNextEpisode(true);
-            }
-        }
-
-        function toggleAudioMute() {
-            state.soundMuted = !state.soundMuted;
-            const icon = document.getElementById('volumeIcon');
-            const ytPlayer = document.getElementById('youtubePlayer');
-
-            if (ytPlayer && ytPlayer.src) {
-                let src = ytPlayer.src;
-                if (state.soundMuted) {
-                    src = src.replace('mute=0', 'mute=1');
-                } else {
-                    src = src.replace('mute=1', 'mute=0');
-                }
-                ytPlayer.src = src;
-            }
-
-            if (state.soundMuted) {
-                icon.className = "fa-solid fa-volume-xmark text-xs text-red-400";
-                showToast("Audio de vídeo silenciado");
-            } else {
-                icon.className = "fa-solid fa-volume-high text-xs text-slate-300";
-                playClickSound();
-                showToast("Audio de vídeo activado");
             }
         }
 
